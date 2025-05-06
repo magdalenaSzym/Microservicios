@@ -1,0 +1,40 @@
+server:
+  port: 8080
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+spring:
+  application:
+    name: spring-cloud-eureka-client-gateway
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+      routes:
+        - id: tutorial-category
+          uri: lb://SPRING-CLOUD-EUREKA-CLIENT-CATEGORY
+          predicates:
+            - Path=/category/**
+        - id: tutorial-author
+          uri: lb://SPRING-CLOUD-EUREKA-CLIENT-AUTHOR
+          predicates:
+            - Path=/author/**
+        - id: tutorial-game
+          uri: lb://SPRING-CLOUD-EUREKA-CLIENT-GAME
+          predicates:
+            - Path=/game/**
+        - id: tutorial-customer
+          uri: lb://SPRING-CLOUD-EUREKA-CLIENT-CUSTOMER
+          predicates:
+            - Path=/customer/**
+        - id: tutorial-borrow
+          uri: lb://SPRING-CLOUD-EUREKA-CLIENT-BORROW
+          predicates:
+            - Path=/borrow/**
