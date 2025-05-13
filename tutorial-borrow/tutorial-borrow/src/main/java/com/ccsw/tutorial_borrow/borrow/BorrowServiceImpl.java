@@ -74,8 +74,8 @@ public class BorrowServiceImpl implements BorrowService {
     public Page<Borrow> findPage(Long gameId, Long customerId, LocalDate date, BorrowSearchDto dto) {
         // System.out.println("Filtros recibidos " + gameId + customerId + date);
 
-        BorrowSpecification idGameSpec = new BorrowSpecification(new SearchCriteria("game.id", ":", gameId));
-        BorrowSpecification idCustomerSpec = new BorrowSpecification(new SearchCriteria("customer.id", ":", customerId));
+        BorrowSpecification idGameSpec = new BorrowSpecification(new SearchCriteria("idGame", ":", gameId));
+        BorrowSpecification idCustomerSpec = new BorrowSpecification(new SearchCriteria("idCustomer", ":", customerId));
         BorrowSpecification dateStartSpec = new BorrowSpecification(new SearchCriteria("startDate", "lessThanOrEqualsTo", date));
         BorrowSpecification dateFinishSpec = new BorrowSpecification(new SearchCriteria("finishDate", "greaterThanOrEqualTo", date));
 
@@ -86,18 +86,18 @@ public class BorrowServiceImpl implements BorrowService {
 
     public void hasCustomerReachedBorrowLimit(Long customerId, LocalDate startDate, LocalDate finishDate) throws Exception {
         long MAX_GAME_BORROW = 2;
-        Specification<Borrow> customerBorrowOnDate = new BorrowSpecification(new SearchCriteria("customer.id", ":", customerId)).and(new BorrowSpecification(new SearchCriteria("dateStart", "lessThanOrEqualsTo", finishDate)))
+        Specification<Borrow> customerBorrowOnDate = new BorrowSpecification(new SearchCriteria("idCustomer", ":", customerId)).and(new BorrowSpecification(new SearchCriteria("dateStart", "lessThanOrEqualsTo", finishDate)))
                 .and(new BorrowSpecification(new SearchCriteria("dateFinish", "greaterThanOrEqualTo", startDate)));
 
         long countGame = this.borrowRepository.count(customerBorrowOnDate);
         if (countGame >= MAX_GAME_BORROW) {
             throw new Exception("The customer exceeds the allowed number of games.");
-           
+
         }
     }
 
     public void hasGameAlreadyBorrowedInPeriod(Long gameId, LocalDate startDate, LocalDate finishDate) throws Exception {
-        Specification<Borrow> customerBorrowOnDate = new BorrowSpecification(new SearchCriteria("game.id", ":", gameId)).and(new BorrowSpecification(new SearchCriteria("startDate", "lessThanOrEqualsTo", finishDate)))
+        Specification<Borrow> customerBorrowOnDate = new BorrowSpecification(new SearchCriteria("idGame", ":", gameId)).and(new BorrowSpecification(new SearchCriteria("startDate", "lessThanOrEqualsTo", finishDate)))
                 .and(new BorrowSpecification(new SearchCriteria("finishDate", "greaterThanOrEqualTo", startDate)));
 
         long isBorrowed = this.borrowRepository.count(customerBorrowOnDate);
